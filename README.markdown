@@ -1,5 +1,11 @@
-# Static Server #
-The quintessential barebone static server.
+# jquery.nom #
+
+Because feedbacks are tasty!
+
+## Configurations ##
+
+
+## Development: Starting the Static Server ##
 
 Install [Node.js](http://nodejs.org/) and then run
 
