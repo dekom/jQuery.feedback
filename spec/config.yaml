@@ -1,0 +1,6 @@
+---
+  format: detailed
+  server: 9000
+  refresh: 3000
+  routeconsole: true
+  runner: index.html
