@@ -1,17 +1,55 @@
 <!DOCTYPE html>  <html> <head>   <title>jquery.nom.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               jquery.nom.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><strong>jQuery.nom (nom)</strong> captures the DOM elements as text or blob along with a
 screenshot.  This information can be sent to the server to enable better
-user feedback.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span> <span class="nx">$</span> <span class="p">)</span> <span class="p">{</span>
-  <span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+user feedback.</p>
 
-  <span class="kd">var</span> <span class="nx">methods</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">options</span> <span class="p">)</span> <span class="p">{</span>
+<p>TODO Create external API to guide planning and coding</p>
 
+<p>External API:
+ init: to setup parameters for nomming
+ activate: to enable DOM element selection for consumption
+ select: to select the element for consumption
+ output: outputs the serialized version of the selected elements</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(</span> <span class="nx">$</span> <span class="p">)</span> <span class="p">{</span>
+  <span class="s1">&#39;use strict&#39;</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h1>Public Methods</h1>
+
+<p>All methods return the jQuery object passed into the function, 
+to maintain extensibility</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">methods</span> <span class="o">=</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h2>Init(options, cb_fn):</h2>
+
+<pre><code> @params an options object to configure jQuery.nom.
+
+ Configures the plugin.
+
+ The valid options are:
+   classes:  an array of class attributes that can be selected
+   for feedback
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">cb_fn</span> <span class="p">)</span> <span class="p">{</span>
       <span class="kd">var</span> <span class="nx">settings</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span> <span class="p">{</span>
         <span class="nx">classes</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;nom&#39;</span><span class="p">]</span>
       <span class="p">},</span> <span class="nx">options</span> <span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Handles method calls</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">$</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">nom</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">method</span>  <span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Return the jQuery object passed into the function, to maintain
-extensibility</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="p">(</span><span class="nx">methods</span><span class="p">[</span><span class="nx">method</span><span class="p">])</span> <span class="p">{</span>
+
+      <span class="k">return</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span> <span class="c1">// end init()</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h2>Active(cb_fn):</h2>
+
+<pre><code> @return $(this)
+
+ Readies the plugin to accept elements for reporting
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">active</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">cb_fn</span> <span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span> <span class="c1">// end active()</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h2>Select(element, cb_fn):</h2>
+
+<pre><code> @params the element that's to be selected
+
+ Adds the element to the list of elements that needs to be
+ reported
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">select</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">element</span><span class="p">,</span> <span class="nx">cb_fn</span> <span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span> <span class="c1">// end select()</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h2>Output(cb_fn):</h2>
+
+<pre><code> Outputs a JSON object of all the elements collected.
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">output</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">cb_fn</span> <span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">}</span> <span class="c1">// end output()</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h1>jQuery Methods Handling</h1>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">$</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">nom</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">method</span>  <span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">methods</span><span class="p">[</span><span class="nx">method</span><span class="p">])</span> <span class="p">{</span>
       <span class="k">return</span> <span class="nx">methods</span><span class="p">[</span><span class="nx">method</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span> <span class="k">this</span><span class="p">,</span>
         <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">);</span>
     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="k">typeof</span> <span class="nx">method</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">method</span> <span class="p">)</span> <span class="p">{</span>
@@ -19,7 +57,7 @@ extensibility</p>             </td>             <td class="code">               
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
       <span class="nx">$</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s1">&#39;Method &#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39; does not exist on jQuery.nom &#39;</span> <span class="p">);</span>
     <span class="p">}</span>
-  <span class="p">};</span> <span class="c1">// end $.fn.nom</span>
+  <span class="p">};</span> <span class="c1">// end $.fn.nom()</span>
 <span class="p">})(</span> <span class="nx">jQuery</span> <span class="p">);</span> <span class="c1">// end (function($))</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
