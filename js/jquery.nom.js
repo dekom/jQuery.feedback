@@ -11,67 +11,97 @@
 //  output: outputs the serialized version of the selected elements
 
 (function( $ ) {
-  'use strict';
+  'use strict'
 
   //# Public Methods
   //
-  // All methods return the jQuery object passed into the function, 
+  // All methods return the jQuery object passed into the function,
   // to maintain extensibility
-  var methods = {
+  var methods =
+    { init: function( options, cb_fn ) {
+      //##  Init(options, cb_fn):
+      //
+      //      @params an options object to configure jQuery.nom.
+      //
+      //      Configures the plugin.
+      //
+      //      The valid options are:
+      //        classes:  an array of class attributes that can be selected
+      //        for feedback
 
-    //##  Init(options, cb_fn):
-    //
-    //      @params an options object to configure jQuery.nom.
-    //
-    //      Configures the plugin.
-    //
-    //      The valid options are:
-    //        classes:  an array of class attributes that can be selected
-    //        for feedback
-    init: function( options, cb_fn ) {
-      var settings = $.extend( {
-        classes: ['nom']
-      }, options );
+        return this.each( function() {
+                            var $this = $(this)
+                              , data = $this.data('nom')
+                              , opts = {}
+                              , classes = ['.nom']
 
-      return $(this);
-    }, // end init()
+                            // Merge the classes array
+                            if (options) {
+                              if (options.classes)
+                                $.merge(classes, options.classes)
 
-    //##  Active(cb_fn):
-    //
-    //      @return $(this)
-    //
-    //      Readies the plugin to accept elements for reporting
-    active: function( cb_fn ) {
-      return $(this);
-    }, // end active()
+                              // Merge the options
+                              $.extend(true, opts, options)
+                            }
 
-    //##  Select(element, cb_fn):
-    //
-    //      @params the element that's to be selected
-    //
-    //      Adds the element to the list of elements that needs to be
-    //      reported
-    select: function( element, cb_fn ) {
-      return $(this);
-    }, // end select()
+                            opts.classes = classes
 
-    //##  Output(cb_fn):
-    //
-    //      Outputs a JSON object of all the elements collected.
-    output: function( cb_fn ) {
-      return $(this);
-    } // end output()
-  };
+                            if (!data)
+                              // Bound settings to data
+                              $this.data('nom', opts)
+                          }
+                        )
+      } // end init()
+
+    , active: function( cb_fn ) {
+      //##  Active(cb_fn):
+      //
+      //      Enables the user to be able to select elements to be sent
+      //      along with the feedback
+      //
+      //      Visually: dim the entire page
+      //      Functionally: bind mouse over and mouse click event listeners
+      //        for selection
+
+        return $(this)
+      } // end active()
+
+    , select: function( element, cb_fn ) {
+      //##  Select(element, cb_fn):
+      //
+      //      @params the element that's to be selected
+      //
+      //      Adds the element to the list of elements that needs to be
+      //      reported
+
+        return $(this)
+      } // end select()
+
+    , output: function( cb_fn ) {
+      //##  Output(cb_fn):
+      //
+      //      Outputs a JSON object of all the elements collected.
+
+        return $(this)
+      } // end output()
+    }
 
   //# jQuery Methods Handling
-  $.fn.nom = function( method  ) {
+  $.fn.nom = function nom( method  ) {
     if (methods[method]) {
-      return methods[method].apply( this,
-        Array.prototype.slice.call(arguments, 1) );
+
+      return methods[method].apply( this
+                                  , Array.prototype.slice.call(arguments, 1)
+                                  )
+
     } else if ( typeof method === 'object' || !method ) {
-      return methods.init.apply( this, arguments );
+
+      return methods.init.apply( this, arguments )
+
     } else {
-      $.error( 'Method ' + method + ' does not exist on jQuery.nom ' );
+
+      $.error( 'Method ' + method + ' does not exist on jQuery.nom ' )
+
     }
-  }; // end $.fn.nom()
-})( jQuery ); // end (function($))
+  } // end $.fn.nom()
+})( jQuery ) // end (function($))
