@@ -14,16 +14,20 @@
     <script src="/spec/jquery.nom.spec.js"></script>
 
     <link rel="stylesheet" href="/css/normalize.css" />
+    <link rel="stylesheet" href="/css/style.css" />
     <title>Sandbox</title>
   </head>
 
   <body>
     <div id="parent">
-      <p>This used to be a blank page.</p>
-      <div id="child">
+      <div id="child" class="nom">
+        <p class="nom">This used to be a blank page.</p>
         <img src="image/yuno.jpg">
-      </div>
-    </div>
+      </div> <!-- #child -->
+      <button id="feedback">Feedback</button>
+    </div> <!-- #parent -->
+    <div id="nomBackground">
+    </div> <!-- #nomBackground -->
 
     <script type="text/javascript">
       jasmine.getEnv().addReporter(new jasmine.HtmlReporter());

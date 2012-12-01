@@ -18,7 +18,7 @@ describe( "External API"
             var $this
 
             beforeEach(function() {
-              $this = $('<div class="nom"></div>')
+              $this = $('<div class="nom"><div id="feedback"></div></div>')
             })
 
             describe( "init"
@@ -55,25 +55,33 @@ describe( "External API"
                                 .toEqual('#feedback')
                             }
                           )
-
-                        it( "should add event listener to feedback button"
-                          , function() {
-                              $this.nom('init', {feedback: "#feedback"})
-                            }
-                          )
                       }
                     )
 
-            describe( "active"
+            describe( "activate"
                     , function() {
+
+                      beforeEach( function() {
+                                    $this.nom('init')
+                                  }
+                                )
+
                       it( "should exist as a jQuery function"
                         , function() {
-                            expect($this.nom('active'))
+                            expect($this.nom('activate'))
                               .toExist()
                           }
                         )
 
-                      it( "" )
+                      it( "should call the transition function passed"
+                        , function() {
+                            var transition = jasmine.createSpy('transition')
+
+                            $this.nom('activate', {transition: transition})
+
+                            expect(transition).toHaveBeenCalled()
+                          }
+                        )
                       }
                     )
 

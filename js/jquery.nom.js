@@ -25,6 +25,8 @@
       //
       //      Configures the plugin.
       //
+      //      Should be called on the feedback button
+      //
       //      The valid options are:
       //        classes:  an array of class attributes that can be selected
       //        for feedback
@@ -45,25 +47,100 @@
                             }
 
                             opts.classes = classes
+                            opts.elements = []
 
-                            if (!data)
+                            if (!data) {
                               // Bound settings to data
                               $this.data('nom', opts)
+                            }
                           }
                         )
       } // end init()
 
-    , active: function( cb_fn ) {
-      //##  Active(cb_fn):
+    , activate: function( fns ) {
+      //##  Activate(functions):
       //
       //      Enables the user to be able to select elements to be sent
       //      along with the feedback
       //
+      //      Functions:
+      //        mouseOver : executed on mouseover the observed element
+      //        click : executed on click the observed element
+      //        transition : executed immediately (default to "light out"
+      //        effect)
+      //
       //      Visually: dim the entire page
       //      Functionally: bind mouse over and mouse click event listeners
-      //        for selection
+      //        for selection and assign cb_fn to the click event
 
-        return $(this)
+        return this.each( function() {
+                            var $this = $(this)
+                              , data = $this.data('nom')
+                              , mouseOver = 'mouseover.nom'
+                              , click = 'click.nom'
+                              , zIndex = 1000
+
+                            if (!data || !data.classes) {
+                              console.log('No classes set to be consumed.')
+                              return
+                            } // No classes set to be consumed
+
+                            // Bind the appropriate events to the elements
+                            // to be observed
+                            function bindEvents(index, elem_class) {
+                              console.log('Bind events')
+
+                              if (fns)
+                                $(elem_class).each( function() {
+                                                      var $this = $(this)
+
+                                                      if (fns.mouseOver)
+                                                        $this.bind(mouseOver, fns.mouseOver)
+
+                                                      if (fns.click)
+                                                        $this.bind(click, fns.click)
+                                                    }
+                                                  )
+                            }
+
+                            $.each(data.classes, bindEvents)
+
+                            ;(function transition() {
+                                console.log('Transition')
+
+                                // Execute the transition function passed in
+                                if (fns && fns.transition) {
+                                  fns.transition()
+                                  return
+                                }
+
+                                // Execute the default set of transition functions
+                                // Add '.nomActive' to the observed elements
+                                // and #nomBackground
+                                function raiseElements(index, elem_class) {
+                                  console.log('Raise elements')
+
+                                  $(elem_class).each( function() {
+                                                        $(this).toggleClass('nomActive')
+                                                      }
+                                                    )
+                                }
+
+                                // Dim events
+                                ; ( function dimBackground() {
+                                      console.log('Dim background')
+                                      $('#nomBackground')
+                                        .toggleClass('nomActiveBackground')
+                                        // adjust height to cover entire
+                                        // document
+                                        .css('height', $(document).height())
+                                    }
+                                  )()
+
+                                $.each(data.classes, raiseElements)
+                              })()
+                          }
+                        )
       } // end active()
 
     , select: function( element, cb_fn ) {

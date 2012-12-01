@@ -1,0 +1,23 @@
+.nomActive {
+  border: thin dashed darkred;
+}
+
+.nomActive.selected {
+  position: relative;
+  z-index: 10000;
+  background-color: #fff;
+}
+
+.nomActiveBackground {
+  position: absolute;
+  left: 0; top: 0;
+  z-index: 1000;
+  background-color: #000;
+  height: 100%;
+  width: 100%;
+
+  //transparency
+  zoom: 1;
+  filter: alpha(opacity=50);
+  opacity: 0.5;
+}
