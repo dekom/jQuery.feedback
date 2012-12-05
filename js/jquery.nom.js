@@ -47,6 +47,15 @@
                             }
 
                             opts.classes = classes
+
+                            // Event types
+                            opts.mouseoverEventType = 'mouseover.nom'
+                            opts.clickEventType = 'click.nom'
+
+                            // Css classes (for default transition classes)
+                            opts.elemActiveClass = 'nomActive'
+                            opts.backgroundActiveClass = 'nomActiveBackground'
+
                             opts.elements = []
 
                             if (!data) {
@@ -76,8 +85,6 @@
         return this.each( function() {
                             var $this = $(this)
                               , data = $this.data('nom')
-                              , mouseOver = 'mouseover.nom'
-                              , click = 'click.nom'
                               , zIndex = 1000
 
                             if (!data || !data.classes) {
@@ -91,14 +98,14 @@
                               console.log('Bind events')
 
                               if (fns)
-                                $(elem_class).each( function() {
+                                $this.find(elem_class).each( function() {
                                                       var $this = $(this)
 
                                                       if (fns.mouseOver)
-                                                        $this.bind(mouseOver, fns.mouseOver)
+                                                        $this.bind(data.mouseoverEventType, fns.mouseover)
 
                                                       if (fns.click)
-                                                        $this.bind(click, fns.click)
+                                                        $this.bind(data.clickEventType, fns.click)
                                                     }
                                                   )
                             }
@@ -118,22 +125,20 @@
                                 // Add '.nomActive' to the observed elements
                                 // and #nomBackground
                                 function raiseElements(index, elem_class) {
-                                  console.log('Raise elements')
 
-                                  $(elem_class).each( function() {
-                                                        $(this).toggleClass('nomActive')
+                                  $this.find(elem_class).each( function() {
+                                                        $(this).toggleClass(data.elemActiveClass)
                                                       }
                                                     )
                                 }
 
-                                // Dim events
+                                // Dim background
                                 ; ( function dimBackground() {
-                                      console.log('Dim background')
-                                      $('#nomBackground')
-                                        .toggleClass('nomActiveBackground')
+                                      $this.find('#nomBackground')
+                                        .toggleClass(data.backgroundActiveClass)
                                         // adjust height to cover entire
                                         // document
-                                        .css('height', $(document).height())
+                                        .css('height', $this.height())
                                     }
                                   )()
 
