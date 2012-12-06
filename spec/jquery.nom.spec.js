@@ -1,7 +1,7 @@
 // jQuery.nom Jasmine test suites
 //
 // @date 20 October 2012
-// @author dekom
+// @author Xing Zhou
 
 describe( "jQuery.nom"
         , function() {
@@ -72,11 +72,8 @@ describe( "External API"
 
                         it( "should store the css classes for when nom is activated"
                           , function() {
-                              expect($this.nom('init').data('nom').elemActiveClass)
-                                .toEqual('nomActive')
-
-                              expect($this.nom('init').data('nom').backgroundActiveClass)
-                                .toEqual('nomActiveBackground')
+                              expect($this.nom('init').data('nom').activeClass)
+                                .toEqual('active')
                             }
                           )
                       }
@@ -116,13 +113,10 @@ describe( "External API"
                         it( "should call the mouseover function on mouseover"
                           , function() {
                               var mouseover = jasmine.createSpy('mouseover')
-                                , event = $this.data('nom').mouseoverEventType
-
-                              console.log(event)
 
                               $this.nom('activate', {mouseover: mouseover})
                               $this.find('.nom').each(  function() {
-                                                          $(this).trigger(event)
+                                                          $(this).trigger('mouseover')
                                                         }
                                                      )
 
@@ -130,27 +124,13 @@ describe( "External API"
                             }
                           )
 
-                        it( "should call the click function"
-                          , function() {
-                              var click = jasmine.createSpy('click')
-                                , event = $this.data('nom').clickEventType
-
-                              $this.nom('activate', {click: click})
-                              $this.find('.nom').each(  function() {
-                                                          $(this).trigger(event)
-                                                        }
-                                                     )
-
-                              expect(click).toHaveBeenCalled()
-                          })
-
                         describe( "on default transition"
                                 , function() {
-                                    it( "should change the class of the selected items"
+                                    it( "should change the class of the consumed items"
                                       , function() {
                                           $this.nom('activate')
 
-                                          expect($this.find('.nom').hasClass($this.data('nom').elemActiveClass))
+                                          expect($this.find('.nom').hasClass($this.data('nom').activeClass))
                                             .toBe(true)
                                         }
                                       )
@@ -159,7 +139,7 @@ describe( "External API"
                                       , function() {
                                           $this.nom('activate')
 
-                                          expect($this.find('#nomBackground').hasClass($this.data('nom').backgroundActiveClass))
+                                          expect($this.find('#nomBackground').hasClass($this.data('nom').activeClass))
                                             .toBe(true)
                                         }
                                       )
@@ -168,7 +148,7 @@ describe( "External API"
                       }
                     )
 
-            describe( "select"
+            describe( "consume"
                     , function() {
                         beforeEach(function() {
                           $this = $('<div><div class="nom"><div id="feedback"></div></div></div>')
@@ -177,8 +157,101 @@ describe( "External API"
 
                         it( "should exist as a jQuery function"
                           , function() {
-                              expect($this.nom('select'))
+                              expect($this.nom('consume'))
                                 .toExist()
+                            }
+                          )
+
+                        it( "should call the function passed in"
+                          , function() {
+                              var fn = jasmine.createSpy('fn')
+                              $this.nom('consume', null, fn)
+
+                              expect(fn).toHaveBeenCalled()
+                            }
+                          )
+
+                        it( "should change $.data('nom').consumed length"
+                          , function() {
+                              // Default consume items should be 0
+                              expect($this.data('nom').consumed.length)
+                                .toBe(0)
+
+                              $this.nom('consume', null)
+
+                              // Adding elements should change the length of
+                              // stored elements
+                              expect($this.data('nom').consumed.length)
+                                .toBe(1)
+                            }
+                          )
+
+                        it( "should add the consumed element to $.data('nom').consumed"
+                          , function() {
+                              $this.find('.nom').each(  function() {
+                                                          $this.nom('consume', this)
+                                                        }
+                                                     )
+
+                              $.each( $this.data('nom').consumed
+                                    , function(index, elem) {
+                                        $(elem).hasClass('nom')
+                                      }
+                                    )
+                            }
+                          )
+                      }
+                    )
+
+            describe( "deactivate"
+                    , function() {
+                        beforeEach(function() {
+                          $this = $('<div><div class="nom"><div id="feedback"></div></div></div>')
+                          $this.nom('init')
+                        })
+
+                        it( "should remove the css class from the possible consume elements"
+                          , function() {
+                              $this.nom('activate')
+                              $this.nom('deactivate')
+
+                              $this.find('.nom').each(function() {
+                                                        expect($(this).hasClass('active'))
+                                                          .toBe(false)
+                                                      }
+                                                     )
+                            }
+                          )
+
+                        it( "should remove the mouseover event listener"
+                          , function() {
+                              var mouseover = jasmine.createSpy('mouseover')
+                              $this.nom('activate', {mouseover: mouseover})
+                              $this.nom('deactivate')
+
+                              $this.find('.nom').each(function() {
+                                                        $(this).trigger('mouseover')
+                                                        expect(mouseover)
+                                                          .not
+                                                          .toHaveBeenCalled()
+                                                      }
+                                                     )
+                            }
+                          )
+
+                        it( "should remove the click event listener"
+                          , function() {
+                              var click = jasmine.createSpy('click')
+                              $this.nom('activate', {click: click})
+                              $this.nom('deactivate')
+
+                              $this.find('.nom').each(function() {
+                                                        $(this).trigger('click')
+                                                        expect(click)
+                                                          .not
+                                                          .toHaveBeenCalled()
+                                                      }
+                                                     )
                             }
                           )
                       }
@@ -187,14 +260,60 @@ describe( "External API"
             describe( "output"
                     , function() {
                         beforeEach(function() {
-                          $this = $('<div class="nom"><div id="feedback"></div></div>')
+                          $this = $('<div><div class="nom"><div id="feedback"></div></div></div>')
                           $this.nom('init')
+                          $this.find('.nom').each(  function() {
+                                                      $this.nom('consume', this)
+                                                    }
+                                                 )
                         })
 
                         it( "should exist as a jQuery function"
                           , function() {
                               expect($this.nom('output'))
                                 .toExist()
+                            }
+                          )
+
+                        it( "should call the function passed in"
+                          , function() {
+                              var fn = jasmine.createSpy('fn')
+
+                              $this.nom('output', fn)
+
+                              expect(fn).toHaveBeenCalled()
+                          }
+                        )
+
+                        it( "should pass the serialized objects to the function"
+                          , function() {
+                              var result
+
+                              function passThrough(obj) {
+                                result = obj
+                              }
+
+                              $this.nom('output', passThrough)
+
+                              expect(result).toEqual(jasmine.any(Array))
+                            }
+                          )
+
+                        it( "should output an array containing json of the consumed elements"
+                          , function() {
+                              var result = []
+
+                              function revert(obj) {
+                                $.each( obj
+                                      , function(index, elem) {
+                                          result.push(JsonML.toHTML(elem))
+                                        }
+                                      )
+                              }
+
+                              $this.nom('output', revert)
+
+                              console.log(result)
                             }
                           )
                       }

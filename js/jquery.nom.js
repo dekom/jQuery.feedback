@@ -2,16 +2,14 @@
 // screenshot.  This information can be sent to the server to enable better
 // user feedback.
 //
-// TODO Create external API to guide planning and coding
-//
 //  External API:
 //  init: to setup parameters for nomming
 //  activate: to enable DOM element selection for consumption
-//  select: to select the element for consumption
-//  output: outputs the serialized version of the selected elements
+//  consume: to consume the element for consumption
+//  output: outputs the serialized version of the consume elements
 
 (function( $ ) {
-  'use strict'
+  'use strict';
 
   //# Public Methods
   //
@@ -34,12 +32,19 @@
         return this.each( function() {
                             var $this = $(this)
                               , data = $this.data('nom')
-                              , opts = {}
                               , classes = ['.nom']
+                                          // Event types
+                              , opts =  { mouseoverEventType : 'mouseover.nom'
+                                        , clickEventType : 'click.nom'
+                                          // Css classes (for default transition classes)
+                                        , activeClass: 'active'
+                                        , backgroundID: 'nomBackground'
+                                        , consumed : []
+                                        }
 
-                            // Merge the classes array
                             if (options) {
                               if (options.classes)
+                                // Merge the classes array
                                 $.merge(classes, options.classes)
 
                               // Merge the options
@@ -47,16 +52,6 @@
                             }
 
                             opts.classes = classes
-
-                            // Event types
-                            opts.mouseoverEventType = 'mouseover.nom'
-                            opts.clickEventType = 'click.nom'
-
-                            // Css classes (for default transition classes)
-                            opts.elemActiveClass = 'nomActive'
-                            opts.backgroundActiveClass = 'nomActiveBackground'
-
-                            opts.elements = []
 
                             if (!data) {
                               // Bound settings to data
@@ -73,7 +68,7 @@
       //      along with the feedback
       //
       //      Functions:
-      //        mouseOver : executed on mouseover the observed element
+      //        mouseover : executed on mouseover the observed element
       //        click : executed on click the observed element
       //        transition : executed immediately (default to "light out"
       //        effect)
@@ -98,16 +93,34 @@
                               console.log('Bind events')
 
                               if (fns)
-                                $this.find(elem_class).each( function() {
-                                                      var $this = $(this)
+                                $this.find(elem_class).each(  function() {
+                                                                var $$this = $(this)
 
-                                                      if (fns.mouseOver)
-                                                        $this.bind(data.mouseoverEventType, fns.mouseover)
+                                                                if (fns.mouseover) {
+                                                                  $$this.bind(data.mouseoverEventType, fns.mouseover)
+                                                                  $$this.bind( 'mouseenter mouseleave'
+                                                                            , function(e) {
+                                                                                $$this.toggleClass("over")
+                                                                                $$this.trigger(data.mouseoverEventType)
+                                                                              }
+                                                                             )
+                                                                }
 
-                                                      if (fns.click)
-                                                        $this.bind(data.clickEventType, fns.click)
-                                                    }
-                                                  )
+                                                                if (fns.click) {
+                                                                  $$this.bind( data.clickEventType
+                                                                            , function() {
+                                                                                $this.nom('consume', this, fns.click)
+                                                                              }
+                                                                            )
+                                                                  $$this.bind( 'click'
+                                                                            , function() {
+                                                                                $$this.toggleClass('consumed')
+                                                                                $$this.trigger(data.clickEventType)
+                                                                              }
+                                                                            )
+                                                                }
+                                                              }
+                                                            )
                             }
 
                             $.each(data.classes, bindEvents)
@@ -122,20 +135,20 @@
                                 }
 
                                 // Execute the default set of transition functions
-                                // Add '.nomActive' to the observed elements
+                                // Add '.active' to the observed elements
                                 // and #nomBackground
                                 function raiseElements(index, elem_class) {
 
                                   $this.find(elem_class).each( function() {
-                                                        $(this).toggleClass(data.elemActiveClass)
+                                                        $(this).addClass(data.activeClass)
                                                       }
                                                     )
                                 }
 
                                 // Dim background
                                 ; ( function dimBackground() {
-                                      $this.find('#nomBackground')
-                                        .toggleClass(data.backgroundActiveClass)
+                                      $this.find('#' + data.backgroundID)
+                                        .addClass(data.activeClass)
                                         // adjust height to cover entire
                                         // document
                                         .css('height', $this.height())
@@ -148,23 +161,93 @@
                         )
       } // end active()
 
-    , select: function( element, cb_fn ) {
-      //##  Select(element, cb_fn):
+    , deactivate: function( cb_fn ) {
+      // Deactivate(cb_fn)
       //
-      //      @params the element that's to be selected
+      // Reverse the activation process by
+      // 1) removing the css elements
+      // 2) removing the mouseover event listener
+      // 3) removing the click event listener
+
+        return this.each( function() {
+                            var $this = $(this)
+                              , data = $this.data('nom')
+
+                            if (!data.classes || data.classes.length === 0)
+                              return
+
+                            if (cb_fn) {
+                              cb_fn()
+                              return
+                            }
+
+                            function removeCss(index, elem_class) {
+                              $this.find(elem_class).each(function() {
+                                                            var $$this = $(this)
+
+                                                           $$this.removeClass(data.activeClass)
+                                                           $$this.unbind(data.mouseoverEventType)
+                                                           $$this.unbind(data.clickEventType)
+                                                          }
+                                                         )
+                            }
+
+                            $.each(data.classes, removeCss)
+
+                            ;(function removeBackground() {
+                                $this.find('#' + data.backgroundID)
+                                  .removeClass(data.activeClass)
+                                  // adjust height to cover entire
+                                  // document
+                                  .css('height', 0)
+                            })()
+                          }
+                        )
+      } // end deactivate()
+
+    , consume: function( element, cb_fn ) {
+      //##  consume( element, cb_fn ):
       //
-      //      Adds the element to the list of elements that needs to be
+      //      Adds the calling element to the list of elements that needs to be
       //      reported
 
-        return $(this)
-      } // end select()
+        return this.each( function() {
+                            var $this = $(this)
+                              , data = $this.data('nom')
+
+                            if(data) {
+                              data.consumed.push(element)
+
+                              if (cb_fn)
+                                cb_fn.apply($this, element)
+                            } else
+                              $.error('Uninitialized error')
+                          }
+                        )
+      } // end consume()
 
     , output: function( cb_fn ) {
       //##  Output(cb_fn):
       //
       //      Outputs a JSON object of all the elements collected.
 
-        return $(this)
+        return this.each( function() {
+                            var $this = $(this)
+                              , data = $this.data('nom')
+                              , jsonArr = []
+
+                            if (!cb_fn)
+                              return
+
+                            $.each( data.consumed
+                                  , function(index, elem) {
+                                      jsonArr.push(JsonML.fromHTML(elem))
+                                    }
+                                  )
+
+                            cb_fn(jsonArr)
+                          }
+                        )
       } // end output()
     }
 

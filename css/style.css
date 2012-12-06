@@ -1,14 +1,20 @@
-.nomActive {
-  border: thin dashed darkred;
-}
-
-.nomActive.selected {
+.nom.active {
   position: relative;
+  border: medium dashed darkred;
   z-index: 10000;
-  background-color: #fff;
 }
 
-.nomActiveBackground {
+.nom.active.over {
+  position: relative;
+  background: #fff;
+}
+
+.nom.active.consumed {
+  position: relative;
+  background: #fff;
+}
+
+#nomBackground.active {
   position: absolute;
   left: 0; top: 0;
   z-index: 1000;
