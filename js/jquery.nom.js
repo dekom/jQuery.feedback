@@ -165,43 +165,46 @@
       //
       // Reverse the activation process by
       // 1) removing the css elements
-      // 2) removing the mouseover event listener
+      // 2) removing the mouseenter event listener
+      // 3) removing the mouseleave event listener
       // 3) removing the click event listener
 
-        return this.each( function() {
-                            var $this = $(this)
-                              , data = $this.data('nom')
+        function __each() {
+          var $this = $(this)
+            , data = $this.data('nom')
 
-                            if (!data.classes || data.classes.length === 0)
-                              return
+          if (!data.classes || data.classes.length === 0)
+            return
 
-                            if (cb_fn) {
-                              cb_fn()
-                              return
-                            }
+          if (cb_fn) {
+            cb_fn()
+            return
+          }
 
-                            function removeCss(index, elem_class) {
-                              $this.find(elem_class).each(function() {
-                                                            var $$this = $(this)
+          function removeCss(index, elem_class) {
+            $this.find(elem_class)
+              .each(function() {
+                      var $$this = $(this)
 
-                                                           $$this.removeClass(data.activeClass)
-                                                           $$this.unbind(data.mouseoverEventType)
-                                                           $$this.unbind(data.clickEventType)
-                                                          }
-                                                         )
-                            }
+                      $$this.removeClass(data.activeClass)
+                      $$this.unbind(data.mouseenterEventType)
+                      $$this.unbind(data.mouseleaveEventType)
+                      $$this.unbind(data.clickEventType)
+                    }
+                   )
+          }
 
-                            $.each(data.classes, removeCss)
+          $.each(data.classes, removeCss)
 
-                            ;(function removeBackground() {
-                                $this.find('#' + data.backgroundID)
-                                  .removeClass(data.activeClass)
-                                  // adjust height to cover entire
-                                  // document
-                                  .css('height', 0)
-                            })()
-                          }
-                        )
+          // Remove the background
+          $this.find('#' + data.backgroundID)
+            .removeClass(data.activeClass)
+            // adjust height to cover entire
+            // document
+            .css('height', 0)
+        }
+
+        return this.each( __each )
       } // end deactivate()
 
     , consume: function( element, cb_fn ) {
@@ -214,13 +217,17 @@
                             var $this = $(this)
                               , data = $this.data('nom')
 
-                            if(data) {
-                              data.consumed.push(element)
+                            if(!data) {
+                              console.log('Uninitialized error')
+                              return
+                            }
 
-                              if (cb_fn)
-                                cb_fn.apply($this, element)
-                            } else
-                              $.error('Uninitialized error')
+                            // Add element to the list
+                            data.consumed.push(element)
+
+                            // Apply the function passed
+                            if (cb_fn)
+                              cb_fn.apply(this, element)
                           }
                         )
       } // end consume()
@@ -228,7 +235,12 @@
     , output: function( cb_fn ) {
       //##  Output(cb_fn):
       //
-      //      Outputs a JSON object of all the elements collected.
+      //      Outputs an array of objects of all the elements collected.
+      //
+      //      Each array's output object is formatted as:
+      //        { element: element.toJson
+      //        , style: css map
+      //        }
 
         return this.each( function() {
                             var $this = $(this)
