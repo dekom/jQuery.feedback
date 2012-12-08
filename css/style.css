@@ -1,17 +1,18 @@
 .nom.active {
   position: relative;
   border: medium dashed darkred;
-  z-index: 10000;
 }
 
 .nom.active.over {
   position: relative;
   background: #fff;
+  border-color: yellow;
 }
 
 .nom.active.consumed {
   position: relative;
   background: #fff;
+  z-index: 10000;
 }
 
 #nomBackground.active {
@@ -26,4 +27,9 @@
   zoom: 1;
   filter: alpha(opacity=50);
   opacity: 0.5;
+}
+
+#feedback {
+  position: relative;
+  z-index: 1001;
 }

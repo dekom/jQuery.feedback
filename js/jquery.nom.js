@@ -41,7 +41,7 @@
                       , clickEventType : 'click.nom'
                         // Css classes (for default transition classes)
                       , activeClass: 'active'
-                      , backgroundID: 'nomBackground'
+                      , backgroundSelector: '#nomBackground'
                       , consumed : []
                       }
 
@@ -138,20 +138,54 @@
                  )
           }
 
+          function passThrough(evt) {
+            var $background = $(data.backgroundSelector)
+
+            $background.hide(0)
+
+            var elem = document.elementFromPoint(evt.pageX, evt.pageY)
+            $(elem).trigger(evt)
+
+            $background.show(0)
+          }
+
+
           // Iterate through the classes and bind all the events
           // to the classes that need to be observed
           $.each(data.classes, bindEvents)
+          $.each(data.classes, assignClass)
 
           if (fns && fns.transition) {
             // Execute the passed in transition functions
             fns.transition()
           } else {
-            $this.find('#' + data.backgroundID)
-              .addClass(data.activeClass)
+            var $background = $this.find(data.backgroundSelector)
+
+            // Activate the background
+            $background.addClass(data.activeClass)
               // adjust height to cover entire parent element
               .css('height', $this.height())
 
-            $.each(data.classes, assignClass)
+            if (fns) {
+              // bind the events to the background to be passed through
+              if (fns.mouseenter) {
+                $background.on( data.mouseenterEventType
+                              , passThrough
+                              )
+              }
+
+              if (fns.mouseleave) {
+                $background.on( data.mouseenterEventType
+                              , passThrough
+                              )
+              }
+
+              if (fns.click) {
+                $background.on( data.clickEventType
+                              , passThrough
+                              )
+              }
+            }
           }
         }
 
