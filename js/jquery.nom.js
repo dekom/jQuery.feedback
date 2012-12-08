@@ -117,7 +117,7 @@
                         }
 
                         if (fns.click) {
-                          $$this.bind(  'click'
+                          $$this.bind(  data.clickEventType
                                       , function() {
                                           $$this.toggleClass('consumed')
                                           $this.nom('consume', this, fns.click)
