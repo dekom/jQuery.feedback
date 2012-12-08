@@ -343,6 +343,8 @@ describe( "External API"
 
                               $this.nom('output', revert)
 
+                              // TODO Figure out how to test the output array
+                              // for correctness
                               console.log(result)
                             }
                           )

@@ -173,8 +173,10 @@
           var $this = $(this)
             , data = $this.data('nom')
 
-          if (!data.classes || data.classes.length === 0)
+          if (!data || !data.classes) {
+            console.log('No classes set to be consumed.')
             return
+          } // No classes set to be consumed
 
           if (cb_fn) {
             cb_fn()
@@ -217,10 +219,10 @@
                             var $this = $(this)
                               , data = $this.data('nom')
 
-                            if(!data) {
-                              console.log('Uninitialized error')
+                            if (!data || !data.classes) {
+                              console.log('No classes set to be consumed.')
                               return
-                            }
+                            } // No classes set to be consumed
 
                             // Add element to the list
                             data.consumed.push(element)
@@ -246,6 +248,11 @@
                             var $this = $(this)
                               , data = $this.data('nom')
                               , jsonArr = []
+
+                            if (!data || !data.classes) {
+                              console.log('No classes set to be consumed.')
+                              return
+                            } // No classes set to be consumed
 
                             if (!cb_fn)
                               return
