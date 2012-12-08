@@ -199,7 +199,8 @@
       // 1) removing the css elements
       // 2) removing the mouseenter event listener
       // 3) removing the mouseleave event listener
-      // 3) removing the click event listener
+      // 4) removing the click event listener
+      // 5) call the callback function
 
         function __each() {
           var $this = $(this)
@@ -261,7 +262,7 @@
 
                             // Apply the function passed
                             if (cb_fn)
-                              cb_fn.apply(this, element)
+                              cb_fn.apply(this, [element])
                           }
                         )
       } // end consume()
@@ -295,7 +296,7 @@
                                     }
                                   )
 
-                            cb_fn(jsonArr)
+                            cb_fn(data.consumed, jsonArr)
                           }
                         )
       } // end output()

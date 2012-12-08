@@ -290,7 +290,7 @@ describe( "External API"
             describe( "output"
                     , function() {
                         beforeEach(function() {
-                          $this = $('<div><div class="nom"><div id="feedback"></div></div></div>')
+                          $this = $('<div><div id="2" class="nom"></div><div id="1" class="nom"><div id="feedback"></div></div></div>')
                           $this.nom('init')
                           $this.find('.nom').each(  function() {
                                                       $this.nom('consume', this)
@@ -333,7 +333,7 @@ describe( "External API"
                           , function() {
                               var result = []
 
-                              function revert(obj) {
+                              function revert(dom, obj) {
                                 $.each( obj
                                       , function(index, elem) {
                                           result.push(JsonML.toHTML(elem))
@@ -343,9 +343,17 @@ describe( "External API"
 
                               $this.nom('output', revert)
 
-                              // TODO Figure out how to test the output array
-                              // for correctness
-                              console.log(result)
+                              expect(result.length).toBe(2)
+
+                              $.each( result
+                                    , function(index, elem) {
+                                        expect($(elem).hasClass('nom')).toBe(true)
+                                        if (index === 0)
+                                          expect($(elem).attr('id')).toEqual('2')
+                                        else
+                                          expect($(elem).attr('id')).toEqual('1')
+                                      }
+                                    )
                             }
                           )
                       }
