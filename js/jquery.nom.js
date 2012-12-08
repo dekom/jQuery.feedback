@@ -91,15 +91,13 @@
           // Bind the appropriate events to the elements
           // to be observed
           function bindEvents(index, elem_class) {
-            console.log('Bind events')
-
             if (fns) {
               $this.find(elem_class)
                 .each(function() {
                         var $$this = $(this)
 
                         if (fns.mouseenter) {
-                          $$this.bind(  data.mouseenterEventType
+                          $$this.on(  data.mouseenterEventType
                                      ,  function(e) {
                                           $$this.toggleClass("over")
                                           fns.mouseenter.apply(this)
@@ -108,7 +106,7 @@
                         }
 
                         if (fns.mouseleave) {
-                          $$this.bind(  data.mouseleaveEventType
+                          $$this.on(  data.mouseleaveEventType
                                      ,  function(e) {
                                           $$this.toggleClass("over")
                                           fns.mouseleave.apply(this)
@@ -117,7 +115,7 @@
                         }
 
                         if (fns.click) {
-                          $$this.bind(  data.clickEventType
+                          $$this.on(  data.clickEventType
                                       , function() {
                                           $$this.toggleClass('consumed')
                                           $this.nom('consume', this, fns.click)
@@ -178,32 +176,32 @@
             return
           } // No classes set to be consumed
 
-          if (cb_fn) {
-            cb_fn()
-            return
-          }
-
           function removeCss(index, elem_class) {
             $this.find(elem_class)
               .each(function() {
                       var $$this = $(this)
 
                       $$this.removeClass(data.activeClass)
-                      $$this.unbind(data.mouseenterEventType)
-                      $$this.unbind(data.mouseleaveEventType)
-                      $$this.unbind(data.clickEventType)
+                      $$this.off(data.mouseenterEventType)
+                      $$this.off(data.mouseleaveEventType)
+                      $$this.off(data.clickEventType)
                     }
                    )
           }
 
           $.each(data.classes, removeCss)
 
-          // Remove the background
-          $this.find('#' + data.backgroundID)
-            .removeClass(data.activeClass)
-            // adjust height to cover entire
-            // document
-            .css('height', 0)
+          if (cb_fn) {
+            cb_fn()
+          } else {
+            var $background = $(data.backgroundSelector)
+
+            $background.removeClass(data.activeClass)
+              .css('height', 0)
+              .off(data.mouseenterEventType)
+              .off(data.mouseleaveEventType)
+              .off(data.clickEventType)
+          }
         }
 
         return this.each( __each )
