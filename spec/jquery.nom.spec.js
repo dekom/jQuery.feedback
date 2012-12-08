@@ -56,10 +56,24 @@ describe( "External API"
                             }
                           )
 
-                        it( "should store the mouseover event type"
+                        it( "should store the mouseenter event type"
                           , function() {
-                             expect($this.nom('init').data('nom').mouseoverEventType)
-                              .toEqual('mouseover.nom')
+                             expect($this.nom('init').data('nom').mouseenterEventType)
+                              .toEqual('mouseenter.nom')
+                            }
+                          )
+
+                        it( "should store the mouseleave event type"
+                          , function() {
+                             expect($this.nom('init').data('nom').mouseleaveEventType)
+                              .toEqual('mouseleave.nom')
+                            }
+                          )
+
+                        it( "should store the mouseleave event type"
+                          , function() {
+                              expect($this.nom('init').data('nom').mouseleaveEventType)
+                                .toEqual('mouseleave.nom')
                             }
                           )
 
@@ -110,17 +124,17 @@ describe( "External API"
                             }
                           )
 
-                        it( "should call the mouseover function on mouseover"
+                        it( "should call the mouseenter function on mouseenter"
                           , function() {
-                              var mouseover = jasmine.createSpy('mouseover')
+                              var mouseenter = jasmine.createSpy('mouseenter')
 
-                              $this.nom('activate', {mouseover: mouseover})
+                              $this.nom('activate', {mouseenter: mouseenter})
                               $this.find('.nom').each(  function() {
-                                                          $(this).trigger('mouseover')
+                                                          $(this).trigger('mouseenter')
                                                         }
                                                      )
 
-                              expect(mouseover).toHaveBeenCalled()
+                              expect(mouseenter).toHaveBeenCalled()
                             }
                           )
 
@@ -223,15 +237,31 @@ describe( "External API"
                             }
                           )
 
-                        it( "should remove the mouseover event listener"
+                        it( "should remove the mouseenter event listener"
                           , function() {
-                              var mouseover = jasmine.createSpy('mouseover')
-                              $this.nom('activate', {mouseover: mouseover})
+                              var mouseenter = jasmine.createSpy('mouseenter')
+                              $this.nom('activate', {mouseenter: mouseenter})
                               $this.nom('deactivate')
 
                               $this.find('.nom').each(function() {
-                                                        $(this).trigger('mouseover')
-                                                        expect(mouseover)
+                                                        $(this).trigger('mouseenter')
+                                                        expect(mouseenter)
+                                                          .not
+                                                          .toHaveBeenCalled()
+                                                      }
+                                                     )
+                            }
+                          )
+
+                        it( "should remove the mouseleave event listener"
+                          , function() {
+                              var mouseleave = jasmine.createSpy('mouseleave')
+                              $this.nom('activate', {mouseleave: mouseleave})
+                              $this.nom('deactivate')
+
+                              $this.find('.nom').each(function() {
+                                                        $(this).trigger('mouseleave')
+                                                        expect(mouseleave)
                                                           .not
                                                           .toHaveBeenCalled()
                                                       }

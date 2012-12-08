@@ -29,36 +29,40 @@
       //        classes:  an array of class attributes that can be selected
       //        for feedback
 
-        return this.each( function() {
-                            var $this = $(this)
-                              , data = $this.data('nom')
-                              , classes = ['.nom']
-                                          // Event types
-                              , opts =  { mouseoverEventType : 'mouseover.nom'
-                                        , clickEventType : 'click.nom'
-                                          // Css classes (for default transition classes)
-                                        , activeClass: 'active'
-                                        , backgroundID: 'nomBackground'
-                                        , consumed : []
-                                        }
+        // Merge the default `opts` and `options`
+        // Store the merged `options` to $.data('nom')
+        function __each() {
+          var $this = $(this)
+            , data = $this.data('nom')
+            , classes = ['.nom']
+                        // Event types
+            , opts =  { mouseenterEventType : 'mouseenter.nom'
+                      , mouseleaveEventType : 'mouseleave.nom'
+                      , clickEventType : 'click.nom'
+                        // Css classes (for default transition classes)
+                      , activeClass: 'active'
+                      , backgroundID: 'nomBackground'
+                      , consumed : []
+                      }
 
-                            if (options) {
-                              if (options.classes)
-                                // Merge the classes array
-                                $.merge(classes, options.classes)
+          if (options) {
+            if (options.classes)
+              // Merge the classes array
+              $.merge(classes, options.classes)
 
-                              // Merge the options
-                              $.extend(true, opts, options)
-                            }
+            // Merge the options
+            $.extend(true, opts, options)
+          }
 
-                            opts.classes = classes
+          opts.classes = classes
 
-                            if (!data) {
-                              // Bound settings to data
-                              $this.data('nom', opts)
-                            }
-                          }
-                        )
+          if (!data) {
+            // Bound settings to data
+            $this.data('nom', opts)
+          }
+        }
+
+        return this.each( __each )
       } // end init()
 
     , activate: function( fns ) {
@@ -68,97 +72,92 @@
       //      along with the feedback
       //
       //      Functions:
-      //        mouseover : executed on mouseover the observed element
+      //        mouseenter : executed when the mouse enters the observed element
+      //        mouseleave : executed when the mouse leaves the observed element
       //        click : executed on click the observed element
       //        transition : executed immediately (default to "light out"
       //        effect)
-      //
-      //      Visually: dim the entire page
-      //      Functionally: bind mouse over and mouse click event listeners
-      //        for selection and assign cb_fn to the click event
 
-        return this.each( function() {
-                            var $this = $(this)
-                              , data = $this.data('nom')
-                              , zIndex = 1000
+        // Bind any of the functions passed in to the appropriate events
+        function __each() {
+          var $this = $(this)
+            , data = $this.data('nom')
 
-                            if (!data || !data.classes) {
-                              console.log('No classes set to be consumed.')
-                              return
-                            } // No classes set to be consumed
+          if (!data || !data.classes) {
+            console.log('No classes set to be consumed.')
+            return
+          } // No classes set to be consumed
 
-                            // Bind the appropriate events to the elements
-                            // to be observed
-                            function bindEvents(index, elem_class) {
-                              console.log('Bind events')
+          // Bind the appropriate events to the elements
+          // to be observed
+          function bindEvents(index, elem_class) {
+            console.log('Bind events')
 
-                              if (fns)
-                                $this.find(elem_class).each(  function() {
-                                                                var $$this = $(this)
+            if (fns) {
+              $this.find(elem_class)
+                .each(function() {
+                        var $$this = $(this)
 
-                                                                if (fns.mouseover) {
-                                                                  $$this.bind(data.mouseoverEventType, fns.mouseover)
-                                                                  $$this.bind( 'mouseenter mouseleave'
-                                                                            , function(e) {
-                                                                                $$this.toggleClass("over")
-                                                                                $$this.trigger(data.mouseoverEventType)
-                                                                              }
-                                                                             )
-                                                                }
+                        if (fns.mouseenter) {
+                          $$this.bind(  data.mouseenterEventType
+                                     ,  function(e) {
+                                          $$this.toggleClass("over")
+                                          fns.mouseenter.apply(this)
+                                        }
+                                     )
+                        }
 
-                                                                if (fns.click) {
-                                                                  $$this.bind( data.clickEventType
-                                                                            , function() {
-                                                                                $this.nom('consume', this, fns.click)
-                                                                              }
-                                                                            )
-                                                                  $$this.bind( 'click'
-                                                                            , function() {
-                                                                                $$this.toggleClass('consumed')
-                                                                                $$this.trigger(data.clickEventType)
-                                                                              }
-                                                                            )
-                                                                }
-                                                              }
-                                                            )
-                            }
+                        if (fns.mouseleave) {
+                          $$this.bind(  data.mouseleaveEventType
+                                     ,  function(e) {
+                                          $$this.toggleClass("over")
+                                          fns.mouseleave.apply(this)
+                                        }
+                                     )
+                        }
 
-                            $.each(data.classes, bindEvents)
+                        if (fns.click) {
+                          $$this.bind(  'click'
+                                      , function() {
+                                          $$this.toggleClass('consumed')
+                                          $this.nom('consume', this, fns.click)
+                                        }
+                                     )
+                        }
+                      }
+                    )
+            }
+          }
 
-                            ;(function transition() {
-                                console.log('Transition')
+          // Execute the default transition functions
+          // Add '.active' to the observed elements
+          // and #nomBackground
+          function assignClass(index, elem_class) {
+            $this.find(elem_class)
+            .each(function() {
+                    $(this).addClass(data.activeClass)
+                  }
+                 )
+          }
 
-                                // Execute the transition function passed in
-                                if (fns && fns.transition) {
-                                  fns.transition()
-                                  return
-                                }
+          // Iterate through the classes and bind all the events
+          // to the classes that need to be observed
+          $.each(data.classes, bindEvents)
 
-                                // Execute the default set of transition functions
-                                // Add '.active' to the observed elements
-                                // and #nomBackground
-                                function raiseElements(index, elem_class) {
+          if (fns && fns.transition) {
+            // Execute the passed in transition functions
+            fns.transition()
+          } else {
+            $this.find('#' + data.backgroundID)
+              .addClass(data.activeClass)
+              // adjust height to cover entire parent element
+              .css('height', $this.height())
 
-                                  $this.find(elem_class).each( function() {
-                                                        $(this).addClass(data.activeClass)
-                                                      }
-                                                    )
-                                }
+            $.each(data.classes, assignClass)
+          }
+        }
 
-                                // Dim background
-                                ; ( function dimBackground() {
-                                      $this.find('#' + data.backgroundID)
-                                        .addClass(data.activeClass)
-                                        // adjust height to cover entire
-                                        // document
-                                        .css('height', $this.height())
-                                    }
-                                  )()
-
-                                $.each(data.classes, raiseElements)
-                              })()
-                          }
-                        )
+        return this.each( __each )
       } // end active()
 
     , deactivate: function( cb_fn ) {
