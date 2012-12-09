@@ -1,31 +1,34 @@
-var $this = $("#plate")
+var $this = $("#nomContainer")
   , feedback = $("#feedback")
   , send = $("#send")
   , active = false
 
 $this.nom('init')
 
-function mouseover() {
-  console.log('mouseover')
+function mouseenter() {
+  console.log('mouseenter')
+}
+
+function mouseleave() {
+  console.log('mouseleave')
 }
 
 function click(element) {
-  console.log('consumed:')
-  console.log(element)
-  console.log('click')
 }
 
 feedback.click( function() {
                   if (active) {
                     $this.nom('deactivate')
+                    active = false
                   } else {
                     $this.nom(  'activate'
-                             ,  { mouseover: mouseover
+                             ,  { mouseenter: mouseenter
+                                , mouseleave: mouseleave
                                 , click: click
                                 }
                              )
+                    active = true
                   }
-                  active = !active
                 }
               )
 
@@ -34,6 +37,8 @@ send.click( function() {
                        ,  function(doms, jsons) {
                             console.log(doms)
                             console.log(jsons)
+                            $this.nom('deactivate')
+                            active = false
                           }
                        )
             }

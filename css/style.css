@@ -1,12 +1,16 @@
+* {
+  box-sizing: border-box;
+}
+
 .nom.active {
   position: relative;
-  border: medium dashed darkred;
+  border: thin solid darkred;
 }
 
 .nom.active.over {
   position: relative;
   background: #fff;
-  border-color: yellow;
+  z-index: 10000;
 }
 
 .nom.active.consumed {
@@ -29,7 +33,13 @@
   opacity: 0.5;
 }
 
-#feedback {
+#feedback, #send {
   position: relative;
   z-index: 1001;
+}
+
+#feedback {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }

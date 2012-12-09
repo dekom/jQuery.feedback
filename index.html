@@ -5,6 +5,7 @@
 
     <link rel="stylesheet" href="lib/jasmine-1.2.0/jasmine.css" type="text/css"
     media="screen" charset="utf-8">
+
     <script src="/lib/jasmine-1.2.0/jasmine.js"></script>
     <script src="/lib/jasmine-1.2.0/jasmine-html.js"></script>
     <script src="/lib/jasmine-jquery-1.3.1.js"></script>
@@ -15,23 +16,22 @@
     <script src="https://raw.github.com/mckamey/jsonml/master/jsonml-dom.js"></script>
     <script src="https://raw.github.com/mckamey/jsonml/master/jsonml-html.js"></script>
 
-    <link rel="stylesheet" href="/css/normalize.css" />
     <link rel="stylesheet" href="/css/style.css" />
     <title>Sandbox</title>
   </head>
 
-  <body>
-    <div id="plate">
-      <div id="parent">
-        <div id="child">
-          <p class="nom">This used to be a blank page.</p>
-          <img src="image/yuno.jpg" class="nom">
-        </div> <!-- #child -->
-        <button id="feedback">Feedback</button>
-        <button id="send">Send</button>
-        <div id="nomBackground"></div>
-      </div> <!-- #parent -->
-    </div> <!-- #plate -->
+  <body id="nomContainer">
+    <fieldset>
+      <legend>Parent</legend>
+      <p class="nom">This used to be a blank page.</p>
+      <fieldset>
+        <legend> Child </legend>
+        <img src="image/yuno.jpg" class="nom">
+      </fieldset>
+    </fieldset>
+    <button id="feedback">Feedback</button>
+    <button id="send">Send</button>
+    <div id="nomBackground"></div>
 
     <script type="text/javascript">
       jasmine.getEnv().addReporter(new jasmine.HtmlReporter());

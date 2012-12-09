@@ -284,6 +284,20 @@ describe( "External API"
                                                      )
                             }
                           )
+
+                        it( "should remove the consumed elements"
+                          , function() {
+                              var click = jasmine.createSpy('click')
+                              $this.nom('activate', {click: click})
+                              $this.find('.nom').each(function() {
+                                                        $(this).trigger('click')
+                                                      }
+                                                     )
+
+                              $this.nom('deactivate')
+                              expect($this.data('nom').consumed.length).toBe(0)
+                            }
+                          )
                       }
                     )
 

@@ -41,6 +41,7 @@
                       , clickEventType : 'click.nom'
                         // Css classes (for default transition classes)
                       , activeClass: 'active'
+                      , consumedClass: 'consumed'
                       , backgroundSelector: '#nomBackground'
                       , consumed : []
                       }
@@ -82,6 +83,7 @@
         function __each() {
           var $this = $(this)
             , data = $this.data('nom')
+            , $background = $this.find(data.backgroundSelector)
 
           if (!data || !data.classes) {
             console.log('No classes set to be consumed.')
@@ -99,7 +101,7 @@
                         if (fns.mouseenter) {
                           $$this.on(  data.mouseenterEventType
                                      ,  function(e) {
-                                          $$this.toggleClass("over")
+                                          $$this.addClass("over")
                                           fns.mouseenter.apply(this)
                                         }
                                      )
@@ -108,7 +110,7 @@
                         if (fns.mouseleave) {
                           $$this.on(  data.mouseleaveEventType
                                      ,  function(e) {
-                                          $$this.toggleClass("over")
+                                          $$this.removeClass("over")
                                           fns.mouseleave.apply(this)
                                         }
                                      )
@@ -117,7 +119,7 @@
                         if (fns.click) {
                           $$this.on(  data.clickEventType
                                       , function() {
-                                          $$this.toggleClass('consumed')
+                                          $$this.toggleClass(data.consumedClass)
                                           $this.nom('consume', this, fns.click)
                                         }
                                      )
@@ -139,12 +141,28 @@
           }
 
           function passThrough(evt) {
-            var $background = $(data.backgroundSelector)
-
             $background.hide(0)
 
             var elem = document.elementFromPoint(evt.pageX, evt.pageY)
             $(elem).trigger(evt)
+
+            $background.show(0)
+          }
+
+          var hoverOver = null
+
+          function mouseoverPassThrough(evt) {
+            $background.hide(0)
+
+            var elem = document.elementFromPoint(evt.pageX, evt.pageY)
+
+            if (!hoverOver) {
+              $(elem).trigger(data.mouseenterEventType)
+              hoverOver = elem
+            } else {
+              $(hoverOver).trigger(data.mouseleaveEventType)
+              hoverOver = null
+            }
 
             $background.show(0)
           }
@@ -159,7 +177,6 @@
             // Execute the passed in transition functions
             fns.transition()
           } else {
-            var $background = $this.find(data.backgroundSelector)
 
             // Activate the background
             $background.addClass(data.activeClass)
@@ -168,17 +185,8 @@
 
             if (fns) {
               // bind the events to the background to be passed through
-              if (fns.mouseenter) {
-                $background.on( data.mouseenterEventType
-                              , passThrough
-                              )
-              }
-
-              if (fns.mouseleave) {
-                $background.on( data.mouseenterEventType
-                              , passThrough
-                              )
-              }
+              $background.on( 'mousemove.nom'
+                            , mouseoverPassThrough )
 
               if (fns.click) {
                 $background.on( data.clickEventType
@@ -217,6 +225,8 @@
                       var $$this = $(this)
 
                       $$this.removeClass(data.activeClass)
+                      $$this.removeClass(data.consumedClass)
+
                       $$this.off(data.mouseenterEventType)
                       $$this.off(data.mouseleaveEventType)
                       $$this.off(data.clickEventType)
@@ -225,6 +235,7 @@
           }
 
           $.each(data.classes, removeCss)
+          data.consumed = []
 
           if (cb_fn) {
             cb_fn()
@@ -233,8 +244,7 @@
 
             $background.removeClass(data.activeClass)
               .css('height', 0)
-              .off(data.mouseenterEventType)
-              .off(data.mouseleaveEventType)
+              .off('mouseover.nom')
               .off(data.clickEventType)
           }
         }
